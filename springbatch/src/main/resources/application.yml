@@ -1,0 +1,22 @@
+
+server:
+  port: 7070
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/employeedb
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
+  jpa:
+    #database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS
+    job:
+      enabled: false
+
+
