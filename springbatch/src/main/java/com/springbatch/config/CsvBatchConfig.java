@@ -1,6 +1,7 @@
 package com.springbatch.config;
 
 import com.springbatch.entity.Employee;
+import com.springbatch.entity.EmployeeDto;
 import com.springbatch.processor.EmployeeProcessor;
 import com.springbatch.repository.EmployeeRepository;
 import org.springframework.batch.core.Job;
@@ -34,8 +35,8 @@ public class CsvBatchConfig {
     //TODO Create Reader
 
     @Bean
-    public FlatFileItemReader<Employee> employeeReader(){
-        FlatFileItemReader<Employee> itemReader = new FlatFileItemReader<>();
+    public FlatFileItemReader<EmployeeDto> employeeReader(){
+        FlatFileItemReader<EmployeeDto> itemReader = new FlatFileItemReader<>();
 
         itemReader.setResource(new FileSystemResource("src/main/resources/Employee-data.csv"));
         itemReader.setName("csv-reader");
@@ -44,16 +45,16 @@ public class CsvBatchConfig {
         return itemReader;
     }
 
-    private LineMapper<Employee> lineMapper() {
-        DefaultLineMapper<Employee> lineMapper=new DefaultLineMapper<>();
+    private LineMapper<EmployeeDto> lineMapper() {
+        DefaultLineMapper<EmployeeDto> lineMapper=new DefaultLineMapper<>();
 
         DelimitedLineTokenizer lineTokenizer=new DelimitedLineTokenizer();
         lineTokenizer.setDelimiter(",");
         lineTokenizer.setStrict(false);
         lineTokenizer.setNames("id","fullName","jobTitle","department","businessUnit","gender");
-
-        BeanWrapperFieldSetMapper<Employee> fieldSetMapper=new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(Employee.class);
+       // lineTokenizer.setIncludedFields(0,4,3,1,5,);
+        BeanWrapperFieldSetMapper<EmployeeDto> fieldSetMapper=new BeanWrapperFieldSetMapper<>();
+        fieldSetMapper.setTargetType(EmployeeDto.class);
 
         lineMapper.setLineTokenizer(lineTokenizer);
         lineMapper.setFieldSetMapper(fieldSetMapper);
@@ -83,7 +84,7 @@ public class CsvBatchConfig {
     @Bean
     public Step step(){
         return stepBuilderFactory
-                .get("step-1").<Employee,Employee>chunk(10)
+                .get("step-1").<EmployeeDto,Employee>chunk(10)
                 .reader(employeeReader())
                 .processor(employeeProcessor())
                 .writer(employeeItemWriter())
